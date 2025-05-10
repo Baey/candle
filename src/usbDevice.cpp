@@ -215,14 +215,22 @@ unsigned long UsbDevice::getConnectedDeviceId(std::string devName)
 
 std::string exec(const char* cmd)
 {
-	std::array<char, 128> buffer;
-	std::string result;
-	std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
-	if (!pipe)
-		throw std::runtime_error("popen() failed!");
-	while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr)
-		result += buffer.data();
-	return result;
+    std::array<char, 128> buffer;
+    std::string result;
+
+    // Use a lambda function as the custom deleter
+    auto pipeDeleter = [](FILE* pipe) {
+        if (pipe) pclose(pipe);
+    };
+
+    std::unique_ptr<FILE, decltype(pipeDeleter)> pipe(popen(cmd, "r"), pipeDeleter);
+    if (!pipe)
+        throw std::runtime_error("popen() failed!");
+
+    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr)
+        result += buffer.data();
+
+    return result;
 }
 
 unsigned long hash(const char* str)

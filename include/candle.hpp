@@ -65,7 +65,7 @@ class Candle
 	/**
 	 * @brief A destructor of Candle class. Takes care of all started threads that need to be stopped before clean exit
 	 */
-	~Candle();
+	virtual ~Candle();
 
 	/**
 	 * @brief Getter for version number
@@ -270,6 +270,11 @@ class Candle
 	*/
 	bool setupMd80TestMainEncoder(uint16_t canId);
 	/**
+	@brief Triggers a homing routine.
+	@return true if the homing routine started succesfully, false otherwise.
+	*/
+	bool setupMd80PerformHoming(uint16_t canId);
+	/**
 	@brief Triggers a controller reset.
 	@return true if the reset routine started succesfully, false otherwise.
 	*/
@@ -340,7 +345,7 @@ class Candle
    private:
 	/* TODO make a proper version class as the reverse initalization is not elegant */
 	const version_ut candleDeviceCompatibleVersion = {'r', 0, 2, 2};
-	const version_ut md80CompatibleVersion = {'r', 0, 4, 2};
+	const version_ut md80CompatibleVersion = {'r', 0, 3, 2};
 
 	static std::vector<Candle*> instances;
 
